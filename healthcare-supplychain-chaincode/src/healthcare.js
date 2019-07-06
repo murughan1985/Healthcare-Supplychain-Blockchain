@@ -79,7 +79,7 @@ let Chaincode = class {
    "assetName": "needle",
    "assetType":"Medical Supplies", 
    "assetExpirtyDate":"12/12/2019"
-   "assetOwner":"1"//ManufacturerId
+   "owner":"1"//ManufacturerId
     }
   */
     async createAsset(stub, args) {
@@ -87,6 +87,7 @@ let Chaincode = class {
         let json = JSON.parse(args);
         let assetId = 'asset' + json['assetId'];
         json['owner'] = 'manufacturer' + json['owner'];
+        json['state'] = stateType.Manufacturer;
         //Each document in CouchDB should have docType for better quey performance
         json['docType'] = 'medicaldevice';
 
@@ -290,5 +291,4 @@ let Chaincode = class {
     }
 }
 shim.start(new Chaincode());
-
 

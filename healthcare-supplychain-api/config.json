@@ -10,7 +10,7 @@
     "admins":[
        {
           "username":"admin",
-          "secret":"Admin123!"
+          "secret":"Admin123"
        }
     ]
  }

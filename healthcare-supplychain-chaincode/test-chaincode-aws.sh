@@ -19,11 +19,23 @@ echo Add Asset and Particants
 
 # Note the Args below - we are passing in a JSON payload, rather than the usual array of strings that Fabric requires. 
 # IMO this is much better as we can clearly see what each argument means, rather than just passing an array of strings
+docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
+    -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
+    cli peer chaincode invoke -C mychannel -n healthcare \
+    -c  '{"Args":["createDistributor","{\"distributorId\": \"1\", \"distributorName\": \"distributor1\", \"distributorLocation\": \"IL\"}"]}' -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
 
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
--e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
-cli peer chaincode invoke -o $ORDERER -C $CHANNEL -n $CHAINCODENAME \
--c '{"Args":["createManufacturer","{\"manufacturerId\": \"1\", \"manufacturerName\": \"manufacturer1\", \"manufacturerLocation\": \"AL"}"]}'
+    -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
+    cli peer chaincode invoke -C mychannel -n healthcare \
+    -c  '{"Args":["createAsset","{\"assetId\": \"1\", \"assetName\": \"needle\",  \"assetExpirtyDate\": \"2019-07-22T11:52:20.182Z\", \"assetOwner\": \"1\" }"]}' -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
+
+docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
+    -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
+    cli peer chaincode invoke -C mychannel -n ngo \
+    -c  '{"Args":["createDonor","{\"donorUserName\": \"braendle\", \"email\": \"braendle@def.com\", \"registeredDate\": \"2018-11-05T14:31:20.182Z\"}"]}' -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
+docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" cli peer chaincode invoke -C mychannel -n ngo -c  '{"Args":["createManufacturer","{\"manufacturerId\": \"1\", \"manufacturerName\": \"manufacturer1\", \"manufacturerLocation\": \"AL"}"]}' -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
+
+docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" cli peer chaincode invoke -o $ORDERER -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["createManufacturer","{\"manufacturerId\": \"1\", \"manufacturerName\": \"manufacturer1\", \"manufacturerLocation\": \"AL"}"]}'
 
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \ 
 -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \ 
