@@ -6,37 +6,32 @@ const stateType = {
     Manufacturer: 'Manufacturered',
     Distributor: 'Distributed',
     Hospital: 'Delivered',
+    Customer: 'Sold',
+    Recall: 'Recalled',
     Disposal: 'Disposed'
 };
 
-async function queryByKey(stub, key) {
-    let resultAsBytes = await stub.getState(key);
-    if (!resultAsBytes || resultAsBytes.toString().length <= 0) {
-        throw new Error('##### queryByKey key: ' + key + ' does not exist');
-    }
-    return resultAsBytes;
-}
 
 let Chaincode = class {
 
     async Init(stub) {
-        console.log('=========== Init: Instantiated / Upgraded ngo chaincode ===========');
         return shim.success();
     }
 
     async Invoke(stub) {
-        console.log('============= START : Invoke ===========');
+        //Read input parameters
         let ret = stub.getFunctionAndParameters();
-        console.log('##### Invoke args: ' + JSON.stringify(ret));
 
+        //Read function name
         let method = this[ret.fcn];
         if (!method) {
             console.error('##### Invoke - error: no chaincode function with name: ' + ret.fcn + ' found');
             throw new Error('No chaincode function with name: ' + ret.fcn + ' found');
         }
         try {
+            //Invoke method
             let response = await method(stub, ret.params);
-            console.log('##### Invoke response payload: ' + response);
+            //Return the respose
             return shim.success(response);
         } catch (err) {
             console.log('##### Invoke - error: ' + err);
@@ -45,36 +40,7 @@ let Chaincode = class {
     }
 
     async initLedger(stub, args) {
-        console.log('============= START : Initialize Ledger ===========');
-        console.log('============= END : Initialize Ledger ===========');
-    }
 
-    /**
-      * Creates a new Asset
-      * 
-      * @param {*} stub 
-      * @param {*} args - JSON as follows:
-      * {
-       "assetId": "1",
-       "assetName": "needle",
-       "assetType":"Syringe", 
-       "assetExpirtyDate":"12/12/2019"
-       "assetOwner":"1"//ManufacturerId
-        }
-      */
-    async createAsset(stub, args) {
-        let json = JSON.parse(args);
-        let assetId = 'asset' + json['assetId'];
-        json['owner'] = 'manufacturer' + json['owner'];
-        json['docType'] = 'medicaldevice';
-
-        // Check if the assset already exists
-        let asset = await stub.getState(assetId);
-        if (asset.toString()) {
-            throw new Error('##### createAsset - This Asset already exists: ' + json['assetId']);
-        }
-
-        await stub.putState(assetId, Buffer.from(JSON.stringify(json)));
     }
 
     /**
@@ -89,17 +55,48 @@ let Chaincode = class {
     }
   */
     async createManufacturer(stub, args) {
+        //Read input values
         let json = JSON.parse(args);
         let manufacturerId = 'manufacturer' + json['manufacturerId'];
         json['docType'] = 'manufacturer';
 
-        // Check if the manufacturer already exists
+        // Check if the manufacturer already exists, read data from ledger
         let manufacturer = await stub.getState(manufacturerId);
         if (manufacturer.toString()) {
             throw new Error('##### createManufacturer - This manufacturer already exists: ' + json['manufacturerId']);
         }
-
+        //Insert into peer ledger
         await stub.putState(manufacturerId, Buffer.from(JSON.stringify(json)));
+    }
+
+    /**
+  * Creates a new Asset
+  * 
+  * @param {*} stub 
+  * @param {*} args - JSON as follows:
+  * {
+   "assetId": "1",
+   "assetName": "needle",
+   "assetType":"MedicalSupplies", 
+   "assetExpirtyDate":"12/12/2019"
+   "assetOwner":"1"//ManufacturerId
+    }
+  */
+    async createAsset(stub, args) {
+        //Read input values
+        let json = JSON.parse(args);
+        let assetId = 'asset' + json['assetId'];
+        json['owner'] = 'manufacturer' + json['owner'];
+        //Each document in CouchDB should have docType for better quey performance
+        json['docType'] = 'medicaldevice';
+
+        // Check if the assset already exists, read data from ledger
+        let asset = await stub.getState(assetId);
+        if (asset.toString()) {
+            throw new Error('##### createAsset - This Asset already exists: ' + json['assetId']);
+        }
+        //Insert into peer ledger
+        await stub.putState(assetId, Buffer.from(JSON.stringify(json)));
     }
 
     /**
@@ -114,15 +111,17 @@ let Chaincode = class {
 }
 */
     async createDistributor(stub, args) {
+        //Read input values
         let json = JSON.parse(args);
         let distributorId = 'distributor' + json['distributorId'];
         json['docType'] = 'distributor';
 
-        // Check if the distributor already exists
+        // Check if the distributor already exists, read data from ledger
         let distributor = await stub.getState(distributorId);
         if (distributor.toString()) {
             throw new Error('##### createDistributor - This distributor already exists: ' + json['distributorId']);
         }
+        //Insert into peer ledger
         await stub.putState(distributorId, Buffer.from(JSON.stringify(json)));
 
     }
@@ -139,15 +138,17 @@ let Chaincode = class {
 }
 */
     async createHospital(stub, args) {
+        //Read input values
         let json = JSON.parse(args);
         let hospitalId = 'hospital' + json['hospitalId'];
         json['docType'] = 'hospital';
 
-        // Check if the hospital already exists
+        // Check if the hospital already exists, read data from ledger
         let hospital = await stub.getState(hospitalId);
         if (hospital.toString()) {
             throw new Error('##### createHospital - This hospital already exists: ' + json['hospitalId']);
         }
+        //Insert into peer ledger
         await stub.putState(hospitalId, Buffer.from(JSON.stringify(json)));
     }
 
@@ -163,33 +164,42 @@ let Chaincode = class {
 }
 */
     async createPharmacy(stub, args) {
+        //Read input values
         let json = JSON.parse(args);
         let pharmacyId = 'pharmacy' + json['pharmacyId'];
         json['docType'] = 'pharmacy';
 
-        // Check if the pharmacy already exists
+        // Check if the pharmacy already exists, read data from ledger
         let pharmacy = await stub.getState(pharmacyId);
         if (pharmacy.toString()) {
             throw new Error('##### createPharmacy - This pharmacy already exists: ' + json['pharmacyId']);
         }
+        //Insert into peer ledger
         await stub.putState(pharmacyId, Buffer.from(JSON.stringify(json)));
     }
 
     async getAssetDetail(stub, args) {
-        let json = JSON.parse(args);
-        let key = 'asset' + json['assetId'];
-        return queryByKey(stub, key);
-    }
-
-    async transferAsset(stub, args) {
-
+        //Read input values
         let json = JSON.parse(args);
         let assetId = 'asset' + json['assetId'];
 
+        //read data from ledger
+        let assetAsBytes = await stub.getState(assetId);
+        if (!assetAsBytes || assetAsBytes.toString().length <= 0) {
+            throw new Error(`${assetId} does not exist`);
+        }
+        return assetAsBytes;
+    }
+
+    async transferAsset(stub, args) {
+        //Read input values
+        let json = JSON.parse(args);
+        let assetId = 'asset' + json['assetId'];
         let transferTo = json['transferTo'];
         let json = JSON.parse(args);
 
-        let assetAsBytes = queryByKey(stub, assetId);
+        //read data from ledger
+        let assetAsBytes = await stub.getState(assetId);
 
         if (!assetAsBytes || assetAsBytes.length === 0) {
             throw new Error(`${assetId} does not exist`);
@@ -207,23 +217,26 @@ let Chaincode = class {
             asset.state = stateType.Hospital;
             asset.owner = 'hospital' + transferTo;
         }
-
+        //Update peer ledger world state 
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
 
     }
 
     async disposeAsset(stub, args) {
+        //Read input values
         let json = JSON.parse(args);
         let assetId = json['assetId'];
 
-        let assetAsBytes = queryByKey(stub, assetId);
+        //read data from ledger
+        let assetAsBytes = await stub.getState(assetId);
 
         if (!assetAsBytes || assetAsBytes.length === 0) {
             throw new Error(`${assetId} does not exist`);
         }
         const asset = JSON.parse(assetAsBytes.toString());
         asset.state = stateType.Disposal;
-
+        
+        //Update peer ledger world state 
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -277,3 +290,5 @@ let Chaincode = class {
     }
 }
 shim.start(new Chaincode());
+
+
