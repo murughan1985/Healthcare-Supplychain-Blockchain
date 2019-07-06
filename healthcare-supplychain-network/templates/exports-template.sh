@@ -15,13 +15,13 @@
 
 # Update these values, then `source` this script
 export REGION=us-east-1
-export NETWORKNAME=<your network name>
-export MEMBERNAME=<the member name you entered when creating your Fabric network>
+export NETWORKNAME=healthcareSupplychain
+export MEMBERNAME=Manufacturer
 export NETWORKVERSION=1.2
-export ADMINUSER=<the admin user name you entered when creating your Fabric network>
-export ADMINPWD=<the admin user name you entered when creating your Fabric network>
-export NETWORKID=<your network ID, from the AWS Console>
-export MEMBERID=<your member ID, from the AWS Console>
+export ADMINUSER=admin
+export ADMINPWD=Admin123
+export NETWORKID=n-6KFLB4HGOFFZ3ELH5NJMA5OUYI
+export MEMBERID=m-RVKJYKGULZG4NI26U2IHTI7EOQ
 
 # No need to change anything below here
 echo Updating AWS CLI to the latest version
