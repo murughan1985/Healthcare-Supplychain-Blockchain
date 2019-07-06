@@ -77,7 +77,7 @@ let Chaincode = class {
   * {
    "assetId": "1",
    "assetName": "needle",
-   "assetType":"MedicalSupplies", 
+   "assetType":"Medical Supplies", 
    "assetExpirtyDate":"12/12/2019"
    "assetOwner":"1"//ManufacturerId
     }
