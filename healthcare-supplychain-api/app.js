@@ -123,6 +123,24 @@ app.post('/users', awaitHandler(async (req, res) => {
 	}
 }));
 
+// POST Manufacturer
+app.post('/manufacturer', awaitHandler(async (req, res) => {
+	logger.info('================ POST on Manufacturer');
+	var args = req.body;
+	var fcn = "createManufacturer";
+
+    logger.info('##### POST on Donor - username : ' + username);
+	logger.info('##### POST on Donor - userOrg : ' + orgName);
+	logger.info('##### POST on Donor - channelName : ' + channelName);
+	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
+	logger.info('##### POST on Donor - fcn : ' + fcn);
+	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
+	logger.info('##### POST on Donor - peers : ' + peers);
+
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	res.send(message);
+}));
+
 // POST Asset
 app.post('/assets', awaitHandler(async (req, res) => {
 	logger.info('================ POST on Asset');
@@ -140,7 +158,62 @@ app.post('/assets', awaitHandler(async (req, res) => {
 	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
 	res.send(message);
 }));
-// GET a specific Donation
+
+// POST Distributor
+app.post('/distributor', awaitHandler(async (req, res) => {
+	logger.info('================ POST on Manufacturer');
+	var args = req.body;
+	var fcn = "createDistributor";
+
+    logger.info('##### POST on Donor - username : ' + username);
+	logger.info('##### POST on Donor - userOrg : ' + orgName);
+	logger.info('##### POST on Donor - channelName : ' + channelName);
+	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
+	logger.info('##### POST on Donor - fcn : ' + fcn);
+	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
+	logger.info('##### POST on Donor - peers : ' + peers);
+
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	res.send(message);
+}));
+
+// POST Hospital
+app.post('/hospital', awaitHandler(async (req, res) => {
+	logger.info('================ POST on hospital');
+	var args = req.body;
+	var fcn = "createHospital";
+
+    logger.info('##### POST on Donor - username : ' + username);
+	logger.info('##### POST on Donor - userOrg : ' + orgName);
+	logger.info('##### POST on Donor - channelName : ' + channelName);
+	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
+	logger.info('##### POST on Donor - fcn : ' + fcn);
+	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
+	logger.info('##### POST on Donor - peers : ' + peers);
+
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	res.send(message);
+}));
+
+// POST Pharmacy
+app.post('/pharmacy', awaitHandler(async (req, res) => {
+	logger.info('================ POST on pharmacy');
+	var args = req.body;
+	var fcn = "createPharmacy";
+
+    logger.info('##### POST on Donor - username : ' + username);
+	logger.info('##### POST on Donor - userOrg : ' + orgName);
+	logger.info('##### POST on Donor - channelName : ' + channelName);
+	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
+	logger.info('##### POST on Donor - fcn : ' + fcn);
+	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
+	logger.info('##### POST on Donor - peers : ' + peers);
+
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	res.send(message);
+}));
+
+// GET a specific asset
 app.get('/assets/:assetId', awaitHandler(async (req, res) => {
 	logger.info('================ GET on Asset by ID');
 	logger.info('Asset ID : ' + req.params);
@@ -159,75 +232,7 @@ app.get('/assets/:assetId', awaitHandler(async (req, res) => {
  	res.send(message);
 }));
 
-// POST Asset
-app.post('/manufacturer', awaitHandler(async (req, res) => {
-	logger.info('================ POST on Manufacturer');
-	var args = req.body;
-	var fcn = "createManufacturer";
-
-    logger.info('##### POST on Donor - username : ' + username);
-	logger.info('##### POST on Donor - userOrg : ' + orgName);
-	logger.info('##### POST on Donor - channelName : ' + channelName);
-	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
-	logger.info('##### POST on Donor - fcn : ' + fcn);
-	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
-	logger.info('##### POST on Donor - peers : ' + peers);
-
-	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
-	res.send(message);
-}));
-
-app.post('/distributor', awaitHandler(async (req, res) => {
-	logger.info('================ POST on Manufacturer');
-	var args = req.body;
-	var fcn = "createDistributor";
-
-    logger.info('##### POST on Donor - username : ' + username);
-	logger.info('##### POST on Donor - userOrg : ' + orgName);
-	logger.info('##### POST on Donor - channelName : ' + channelName);
-	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
-	logger.info('##### POST on Donor - fcn : ' + fcn);
-	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
-	logger.info('##### POST on Donor - peers : ' + peers);
-
-	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
-	res.send(message);
-}));
-
-app.post('/hospital', awaitHandler(async (req, res) => {
-	logger.info('================ POST on hospital');
-	var args = req.body;
-	var fcn = "createHospital";
-
-    logger.info('##### POST on Donor - username : ' + username);
-	logger.info('##### POST on Donor - userOrg : ' + orgName);
-	logger.info('##### POST on Donor - channelName : ' + channelName);
-	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
-	logger.info('##### POST on Donor - fcn : ' + fcn);
-	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
-	logger.info('##### POST on Donor - peers : ' + peers);
-
-	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
-	res.send(message);
-}));
-
-app.post('/pharmacy', awaitHandler(async (req, res) => {
-	logger.info('================ POST on pharmacy');
-	var args = req.body;
-	var fcn = "createPharmacy";
-
-    logger.info('##### POST on Donor - username : ' + username);
-	logger.info('##### POST on Donor - userOrg : ' + orgName);
-	logger.info('##### POST on Donor - channelName : ' + channelName);
-	logger.info('##### POST on Donor - chaincodeName : ' + chaincodeName);
-	logger.info('##### POST on Donor - fcn : ' + fcn);
-	logger.info('##### POST on Donor - args : ' + JSON.stringify(args));
-	logger.info('##### POST on Donor - peers : ' + peers);
-
-	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
-	res.send(message);
-}));
-
+// POST Transfer Asset
 app.post('/transfer', awaitHandler(async (req, res) => {
 	logger.info('================ POST on Asset');
 	var args = req.body;
@@ -245,6 +250,7 @@ app.post('/transfer', awaitHandler(async (req, res) => {
 	res.send(message);
 }));
 
+// POST disposal of an Asset
 app.post('/disposal', awaitHandler(async (req, res) => {
 	logger.info('================ POST on Asset');
 	var args = req.body;
