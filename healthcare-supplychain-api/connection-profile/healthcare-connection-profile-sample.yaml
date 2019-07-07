@@ -13,9 +13,9 @@
 
 # Sample connection profile for an Amazon Managed Blockchain Fabric network
 
-name: "ngo"
+name: "healthcare"
 x-type: "hlfv1"
-description: "NGO Network"
+description: "healthcare Network"
 version: "1.0"
 
 channels:

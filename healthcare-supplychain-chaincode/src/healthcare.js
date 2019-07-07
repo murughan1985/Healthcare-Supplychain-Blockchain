@@ -193,6 +193,18 @@ let Chaincode = class {
         return assetAsBytes;
     }
 
+        /**
+* Transfer asset
+* 
+* @param {*} stub 
+* @param {*} args - JSON as follows:
+* {
+"assetId": "1",
+"transferTo": "1",
+"transferToMember":"distributor"
+}
+*/
+
     async transferAsset(stub, args) {
         //Read input values
         let json = JSON.parse(args);
