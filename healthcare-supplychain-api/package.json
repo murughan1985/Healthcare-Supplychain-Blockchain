@@ -1,7 +1,7 @@
 {
-  "name": "ngo-rest-api",
+  "name": "healthcare-rest-api",
   "version": "1.0.0",
-  "description": "A REST api supporting the NGO application",
+  "description": "A REST api supporting the healthcare application",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"

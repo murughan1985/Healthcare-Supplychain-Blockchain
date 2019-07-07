@@ -23,7 +23,7 @@ hfc.setLogger(logger);
 
 async function getClientForOrg (userorg, username) {
 	logger.info('============ START getClientForOrg for org %s and user %s', userorg, username);
-    let config = '../tmp/connection-profile/ngo-connection-profile.yaml';
+    let config = '../tmp/connection-profile/healthcare-connection-profile.yaml';
     let orgLower = userorg.toLowerCase();
     let clientConfig = '../tmp/connection-profile/' + orgLower + '/client-' + orgLower + '.yaml';
 

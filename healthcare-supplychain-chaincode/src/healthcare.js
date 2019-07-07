@@ -6,6 +6,7 @@ const stateType = {
     Manufacturer: 'Manufacturered',
     Distributor: 'Distributed',
     Hospital: 'Delivered',
+    Pharmacy: 'Delivered',
     Customer: 'Sold',
     Recall: 'Recalled',
     Disposal: 'Disposed'
@@ -78,8 +79,9 @@ let Chaincode = class {
    "assetId": "1",
    "assetName": "needle",
    "assetType":"Medical Supplies", 
-   "assetExpirtyDate":"12/12/2019"
-   "owner":"1"//ManufacturerId
+   "assetExpirtyDate":"2019-30-12",
+   "owner":"1"//ManufacturerId,
+   "state":"Manufacturered",
     }
   */
     async createAsset(stub, args) {
@@ -124,7 +126,6 @@ let Chaincode = class {
         }
         //Insert into peer ledger
         await stub.putState(distributorId, Buffer.from(JSON.stringify(json)));
-
     }
 
     /**
@@ -197,6 +198,7 @@ let Chaincode = class {
         let json = JSON.parse(args);
         let assetId = 'asset' + json['assetId'];
         let transferTo = json['transferTo'];
+        let transferToMember = json['transferToMember'];
         let json = JSON.parse(args);
 
         //read data from ledger
@@ -208,19 +210,29 @@ let Chaincode = class {
         const asset = JSON.parse(assetAsBytes.toString());
         let state = asset.state;
         //Transfer to Distributor
-        if (state = stateType.Manufacturer) {
+        if (state = stateType.Manufacturer && (transferToMember = "distributor")) {
             asset.state = stateType.Distributor;
             asset.owner = 'distributor' + transferTo;
         }
-
         //Transfer to Hospital
-        else if (state = stateType.Distributor) {
+        else if (state = stateType.Distributor && (transferToMember = "hospital")) {
             asset.state = stateType.Hospital;
             asset.owner = 'hospital' + transferTo;
         }
+        //Transfer to Pharmacy
+        else if (state = stateType.Distributor && (transferToMember = "pharmacy")) {
+            asset.state = stateType.Pharmacy;
+            asset.owner = 'pharmacy' + transferTo;
+        }
+        //Transfer to Customer
+        else if (transferToMember = "user") {
+            if (state = stateType.Pharmacy || (state = stateType.Hospital)) {
+                asset.state = stateType.Customer;
+                asset.owner = 'customer' + transferTo;
+            }
+        }
         //Update peer ledger world state 
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
-
     }
 
     async disposeAsset(stub, args) {
@@ -236,7 +248,7 @@ let Chaincode = class {
         }
         const asset = JSON.parse(assetAsBytes.toString());
         asset.state = stateType.Disposal;
-        
+
         //Update peer ledger world state 
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
     }
