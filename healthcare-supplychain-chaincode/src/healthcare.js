@@ -19,72 +19,72 @@ async function queryByString(stub, queryString) {
     let endKey = "";
     let jsonQueryString = JSON.parse(queryString);
     if (jsonQueryString['selector'] && jsonQueryString['selector']['docType']) {
-      docType = jsonQueryString['selector']['docType'];
-      startKey = docType + "0";
-      endKey = docType + "z";
+        docType = jsonQueryString['selector']['docType'];
+        startKey = docType + "0";
+        endKey = docType + "z";
     }
     else {
-      throw new Error('##### queryByString - Cannot call queryByString without a docType element: ' + queryString);   
+        throw new Error('##### queryByString - Cannot call queryByString without a docType element: ' + queryString);
     }
-  
+
     let iterator = await stub.getStateByRange(startKey, endKey);
-  
+
     // Iterator handling is identical for both CouchDB and LevelDB result sets, with the 
     // exception of the filter handling in the commented section below
     let allResults = [];
     while (true) {
-      let res = await iterator.next();
-  
-      if (res.value && res.value.value.toString()) {
-        let jsonRes = {};
-        console.log('##### queryByString iterator: ' + res.value.value.toString('utf8'));
-  
-        jsonRes.Key = res.value.key;
-        try {
-          jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
-        } 
-        catch (err) {
-          console.log('##### queryByString error: ' + err);
-          jsonRes.Record = res.value.value.toString('utf8');
-        }
-        // ******************* LevelDB filter handling ******************************************
-        // LevelDB: additional code required to filter out records we don't need
-        // Check that each filter condition in jsonQueryString can be found in the iterator json
-        // If we are using CouchDB, this isn't required as rich query supports selectors
-        let jsonRecord = jsonQueryString['selector'];
-        // If there is only a docType, no need to filter, just return all
-        console.log('##### queryByString jsonRecord - number of JSON keys: ' + Object.keys(jsonRecord).length);
-        if (Object.keys(jsonRecord).length == 1) {
-          allResults.push(jsonRes);
-          continue;
-        }
-        for (var key in jsonRecord) {
-          if (jsonRecord.hasOwnProperty(key)) {
-            console.log('##### queryByString jsonRecord key: ' + key + " value: " + jsonRecord[key]);
-            if (key == "docType") {
-              continue;
+        let res = await iterator.next();
+
+        if (res.value && res.value.value.toString()) {
+            let jsonRes = {};
+            console.log('##### queryByString iterator: ' + res.value.value.toString('utf8'));
+
+            jsonRes.Key = res.value.key;
+            try {
+                jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
             }
-            console.log('##### queryByString json iterator has key: ' + jsonRes.Record[key]);
-            if (!(jsonRes.Record[key] && jsonRes.Record[key] == jsonRecord[key])) {
-              // we do not want this record as it does not match the filter criteria
-              continue;
+            catch (err) {
+                console.log('##### queryByString error: ' + err);
+                jsonRes.Record = res.value.value.toString('utf8');
             }
-            allResults.push(jsonRes);
-          }
+            // ******************* LevelDB filter handling ******************************************
+            // LevelDB: additional code required to filter out records we don't need
+            // Check that each filter condition in jsonQueryString can be found in the iterator json
+            // If we are using CouchDB, this isn't required as rich query supports selectors
+            let jsonRecord = jsonQueryString['selector'];
+            // If there is only a docType, no need to filter, just return all
+            console.log('##### queryByString jsonRecord - number of JSON keys: ' + Object.keys(jsonRecord).length);
+            if (Object.keys(jsonRecord).length == 1) {
+                allResults.push(jsonRes);
+                continue;
+            }
+            for (var key in jsonRecord) {
+                if (jsonRecord.hasOwnProperty(key)) {
+                    console.log('##### queryByString jsonRecord key: ' + key + " value: " + jsonRecord[key]);
+                    if (key == "docType") {
+                        continue;
+                    }
+                    console.log('##### queryByString json iterator has key: ' + jsonRes.Record[key]);
+                    if (!(jsonRes.Record[key] && jsonRes.Record[key] == jsonRecord[key])) {
+                        // we do not want this record as it does not match the filter criteria
+                        continue;
+                    }
+                    allResults.push(jsonRes);
+                }
+            }
+            // ******************* End LevelDB filter handling ******************************************
+            // For CouchDB, push all results
+            // allResults.push(jsonRes);
         }
-        // ******************* End LevelDB filter handling ******************************************
-        // For CouchDB, push all results
-        // allResults.push(jsonRes);
-      }
-      if (res.done) {
-        await iterator.close();
-        console.log('##### queryByString all results: ' + JSON.stringify(allResults));
-        console.log('============= END : queryByString ===========');
-        return Buffer.from(JSON.stringify(allResults));
-      }
+        if (res.done) {
+            await iterator.close();
+            console.log('##### queryByString all results: ' + JSON.stringify(allResults));
+            console.log('============= END : queryByString ===========');
+            return Buffer.from(JSON.stringify(allResults));
+        }
     }
-  }
-  
+}
+
 
 let Chaincode = class {
 
@@ -152,7 +152,7 @@ let Chaincode = class {
    "assetId": "1",
    "assetName": "needle",
    "assetType":"Medical Supplies", 
-   "assetExpirtyDate":"2019-30-12",
+   "assetExpirtyDate":"2019-12-30",
    "owner":"1"//ManufacturerId,
    "state":"Manufacturered",
     }
@@ -266,35 +266,35 @@ let Chaincode = class {
         return assetAsBytes;
     }
 
-      /**
-   * Retrieves all donors
-   * 
-   * @param {*} stub 
-   * @param {*} args 
-   */
-  async queryAllAssets(stub, args) {
-    console.log('============= START : queryAllAssets ===========');
-    console.log('##### queryAllAssets arguments: ' + JSON.stringify(args));
- 
-    let queryString = '{"selector": {"docType": "medicaldevice"}}';
-    return queryByString(stub, queryString);
-  }
+    /**
+ * Retrieves all donors
+ * 
+ * @param {*} stub 
+ * @param {*} args 
+ */
+    async queryAllAssets(stub, args) {
+        console.log('============= START : queryAllAssets ===========');
+        console.log('##### queryAllAssets arguments: ' + JSON.stringify(args));
 
-  async queryAll(stub, args) {
-    console.log('============= START : queryAllAssets ===========');
-    console.log('##### queryAllAssets arguments: ' + JSON.stringify(args));
- 
-     //Read input values
-     let json = JSON.parse(args);
-     let docType = json['docType'];
+        let queryString = '{"selector": {"docType": "medicaldevice"}}';
+        return queryByString(stub, queryString);
+    }
 
-    let queryString = '{"selector": {"docType": "' + docType + '"}}';
-    return queryByString(stub, queryString);
-  }
+    async queryAll(stub, args) {
+        console.log('============= START : queryAllAssets ===========');
+        console.log('##### queryAllAssets arguments: ' + JSON.stringify(args));
+
+        //Read input values
+        let json = JSON.parse(args);
+        let docType = json['docType'];
+
+        let queryString = '{"selector": {"docType": "' + docType + '"}}';
+        return queryByString(stub, queryString);
+    }
 
 
 
-        /**
+    /**
 * Transfer asset
 * 
 * @param {*} stub 
@@ -323,17 +323,17 @@ let Chaincode = class {
         const asset = JSON.parse(assetAsBytes.toString());
         let state = asset.state;
         //Transfer to Distributor
-        if (state = stateType.Manufacturer && (transferToMember = "distributor")) {
+        if (transferToMember = "distributor") {
             asset.state = stateType.Distributor;
             asset.owner = 'distributor' + transferTo;
         }
         //Transfer to Hospital
-        else if (state = stateType.Distributor && (transferToMember = "hospital")) {
+        else if (transferToMember = "hospital") {
             asset.state = stateType.Hospital;
             asset.owner = 'hospital' + transferTo;
         }
         //Transfer to Pharmacy
-        else if (state = stateType.Distributor && (transferToMember = "pharmacy")) {
+        else if (transferToMember = "pharmacy") {
             asset.state = stateType.Pharmacy;
             asset.owner = 'pharmacy' + transferTo;
         }
@@ -416,4 +416,3 @@ let Chaincode = class {
     }
 }
 shim.start(new Chaincode());
-
