@@ -305,53 +305,35 @@ let Chaincode = class {
 "transferToMember":"distributor"
 }
 */
+    // Deletes an entity from state
+
 
     async transferAsset(stub, args) {
-        //Read input values
+        //Read input value
         let json = JSON.parse(args);
         let assetId = 'asset' + json['assetId'];
-        let transferTo = json['transferTo'];
-        let transferToMember = json['transferToMember'];
-        let json = JSON.parse(args);
-
-        //read data from ledger
         let assetAsBytes = await stub.getState(assetId);
-
-        if (!assetAsBytes || assetAsBytes.length === 0) {
-            throw new Error(`${assetId} does not exist`);
-        }
-        const asset = JSON.parse(assetAsBytes.toString());
-        let state = asset.state;
-        //Transfer to Distributor
-        if (transferToMember = "distributor") {
-            asset.state = stateType.Distributor;
-            asset.owner = 'distributor' + transferTo;
-        }
-        //Transfer to Hospital
-        else if (transferToMember = "hospital") {
-            asset.state = stateType.Hospital;
-            asset.owner = 'hospital' + transferTo;
-        }
-        //Transfer to Pharmacy
-        else if (transferToMember = "pharmacy") {
-            asset.state = stateType.Pharmacy;
-            asset.owner = 'pharmacy' + transferTo;
-        }
-        //Transfer to Customer
-        else if (transferToMember = "user") {
-            if (state = stateType.Pharmacy || (state = stateType.Hospital)) {
-                asset.state = stateType.Customer;
-                asset.owner = 'customer' + transferTo;
-            }
-        }
-        //Update peer ledger world state 
+        let asset = JSON.parse(assetAsBytes.toString());
+        //update asset details
+        asset.owner = json['transferTo'];
+        asset.state = json['state'];
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
+    }
+
+    async delete(stub, args) {
+
+
+        let json = JSON.parse(args);
+        let assetId = json['assetId'];
+
+        // Delete the key from the state in ledger
+        await stub.deleteState(assetId);
     }
 
     async disposeAsset(stub, args) {
         //Read input values
         let json = JSON.parse(args);
-        let assetId = json['assetId'];
+        let assetId = 'asset' + json['assetId'];
 
         //read data from ledger
         let assetAsBytes = await stub.getState(assetId);
@@ -360,7 +342,7 @@ let Chaincode = class {
             throw new Error(`${assetId} does not exist`);
         }
         const asset = JSON.parse(assetAsBytes.toString());
-        asset.state = stateType.Disposal;
+        asset.state = 'Disposed';
 
         //Update peer ledger world state 
         await stub.putState(assetId, Buffer.from(JSON.stringify(asset)));
