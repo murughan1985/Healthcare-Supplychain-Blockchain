@@ -13,9 +13,5 @@
 # permissions and limitations under the License.
 #
 */
-export * from './api.service';
-export * from './auth.service';
-export * from './session.service';
-export * from './socket.service';
-export * from './utils.service';
-export * from './donor.service'
+
+export { Donor } from './donor.model';

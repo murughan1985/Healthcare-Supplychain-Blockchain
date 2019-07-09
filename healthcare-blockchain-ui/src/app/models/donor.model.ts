@@ -13,9 +13,20 @@
 # permissions and limitations under the License.
 #
 */
-export * from './api.service';
-export * from './auth.service';
-export * from './session.service';
-export * from './socket.service';
-export * from './utils.service';
-export * from './donor.service'
+export class Donor {
+  id: string = null;
+  name: string = null;
+  email: string = null;
+  password: string = null;
+
+  constructor() { }
+
+
+  get(name: string, email: string) {
+      this.name = name;
+      this.email = email;
+      this.id = name;
+      return this;
+  }
+
+}

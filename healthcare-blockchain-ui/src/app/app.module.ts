@@ -33,7 +33,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgosListComponent } from './ui/healthcare-blockchain/healthcare-blockchain.component';
 
 // Shared Services
-import { AuthService, ApiService, SessionService } from './services/shared';
+import { AuthService, ApiService, SessionService, DonorService} from './services/shared';
 import { AssetTrackingService } from './services/assetTrackingService';
 
 
@@ -59,7 +59,8 @@ import { AssetTrackingService } from './services/assetTrackingService';
     AuthService,
     ApiService,
     SessionService,
-    AssetTrackingService
+    AssetTrackingService,
+    DonorService
   ],
   bootstrap: [AppComponent],
     

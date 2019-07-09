@@ -16,6 +16,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { DonorService } from 'src/app/services/shared';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 @Component({
@@ -30,7 +31,8 @@ export class SignupComponent implements OnInit {
   loading = false;
 
   constructor(private formBuilder: FormBuilder,
-    private router: Router) {
+    private router: Router,
+    private userService: DonorService) {
   }
 
   ngOnInit() {
@@ -60,29 +62,29 @@ export class SignupComponent implements OnInit {
       return;
     }
     const user = this.userForm.value;
-    // this.userService.createUser(user).subscribe(
-    //   data => {
-    //     if (data.success) {
-    //       this.userService.signup(user).subscribe(
-    //         resp => {
-    //           this.router.navigate(['signin']);
-    //           return;
-    //         },
-    //         err => {
-    //           this.loading = false;
-    //           this.error = err.statusText;
-    //         }
-    //       );
-    //     } else {
-    //       this.loading = false;
-    //       this.error = 'Username or email already in use!';
-    //     }
-    //   },
-    //   err => {
-    //     this.loading = false;
-    //     this.error = err.statusText + ". Ensure you are using HTTP, not HTTPS, to access the site.";
-    //   }
-    // );
+    this.userService.createUser(user).subscribe(
+      data => {
+        if (data.success) {
+          this.userService.signup(user).subscribe(
+            resp => {
+              this.router.navigate(['signin']);
+              return;
+            },
+            err => {
+              this.loading = false;
+              this.error = err.statusText;
+            }
+          );
+        } else {
+          this.loading = false;
+          this.error = 'Username or email already in use!';
+        }
+      },
+      err => {
+        this.loading = false;
+        this.error = err.statusText + ". Ensure you are using HTTP, not HTTPS, to access the site.";
+      }
+    );
   }
 
 }
